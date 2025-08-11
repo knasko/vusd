@@ -15,8 +15,10 @@ export const VUSD_DECIMALS = 18;
 export const ERC20_ABI = [
   "function approve(address spender, uint256 amount) returns (bool)",
   "function allowance(address owner, address spender) view returns (uint256)",
-  "function balanceOf(address account) view returns (uint256)"
+  "function balanceOf(address account) view returns (uint256)",
+  "function decimals() view returns (uint8)"
 ];
+
 
 export const V3_ROUTER_ABI = [
     "function exactInput((bytes path,address recipient,uint256 amountIn,uint256 amountOutMinimum)) payable returns (uint256)",

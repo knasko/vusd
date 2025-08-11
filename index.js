@@ -29,6 +29,9 @@ if (!process.env.PRIVATE_KEY) {
 const RPC = await selectRpc();
 const provider = new ethers.JsonRpcProvider(RPC);
 const wallet   = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const erc = (addr) => new ethers.Contract(addr, ERC20_ABI, wallet);
+const DEC_USDC = Number(await erc(USDC_ADDRESS).decimals());
+const DEC_VUSD = Number(await erc(VUSD_ADDRESS).decimals());
 
 // ===== Kontrakty i swaper’y =====
 const usdc = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, wallet);
@@ -81,8 +84,8 @@ async function mainOnce() {
   try {
     logger.line(`\n🤖 Start skanu pul (oba kierunki USDC↔vUSD)`);
 
-    const amountUsdcBn = bn(TRADE_AMOUNT_USDC, USDC_DECIMALS);
-    const amountVusdBn = bn(TRADE_AMOUNT_VUSD, VUSD_DECIMALS);
+const amountUsdcBn = bn(TRADE_AMOUNT_USDC, DEC_USDC);
+const amountVusdBn = bn(TRADE_AMOUNT_VUSD, DEC_VUSD);
 
     // Balansy równolegle
     const [balUsdc, balVusd] = await Promise.all([
@@ -192,8 +195,9 @@ async function mainOnce() {
     const revRes = revResAll.filter(r => r.ok);
 
     // Logi z właściwą jednostką
-    for (const q of fwdRes) logger.quote(`(USDC→vUSD) ${q.name}`, q.out, q.out - TRADE_AMOUNT_USDC, 'vUSD');
-    for (const q of revRes) logger.quote(`(vUSD→USDC) ${q.name}`, q.out, q.out - TRADE_AMOUNT_VUSD, 'USDC');
+for (const q of fwdRes) logger.quote(`(USDC→vUSD) ${q.name}`, q.out, q.out - TRADE_AMOUNT_USDC, 'vUSD');
+for (const q of revRes) logger.quote(`(vUSD→USDC) ${q.name}`, q.out, q.out - TRADE_AMOUNT_VUSD, 'USDC');
+
 
     // Wybór najlepszych
     const bestFwd = fwdRes.length ? fwdRes.reduce((a,b)=>a.out>b.out?a:b) : null; // max vUSD
