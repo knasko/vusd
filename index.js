@@ -7,8 +7,8 @@ import {
   USDC_ADDRESS, USDC_DECIMALS, VUSD_DECIMALS,
   V3_POOLS, V3_ROUTER_ADDRESS, V2_ROUTER_ADDRESS, ERC20_ABI
 } from "./utils/constants.js";
-import { buildV3 } from "./utils/swapers/v3.js";
-import { buildV2 } from "./utils/swapers/v2.js";
+import { buildV3 } from "./utils/swappers/v3.js";
+import { buildV2 } from "./utils/swappers/v2.js";
 
 const CHECK_INTERVAL = parseInt(process.env.CHECK_INTERVAL_MS || '20000', 10);
 const TRADE_AMOUNT_USDC = Number(process.env.TRADE_AMOUNT_USDC || '1000');
