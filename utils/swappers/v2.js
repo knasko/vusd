@@ -1,5 +1,9 @@
 import { ethers } from "ethers";
-import { V2_ROUTER_ADDRESS, V2_ROUTER_ABI, USDC_ADDRESS, VUSD_ADDRESS, VUSD_DECIMALS } from "../constants.js";
+import {
+  V2_ROUTER_ADDRESS, V2_ROUTER_ABI,
+  USDC_ADDRESS, VUSD_ADDRESS, VUSD_DECIMALS
+} from "../constants.js";
+
 
 export function buildV2(providerOrSigner) {
   const routerV2 = new ethers.Contract(V2_ROUTER_ADDRESS, V2_ROUTER_ABI, providerOrSigner);
