@@ -5,8 +5,8 @@
     "WORKDIR /app",
     "ENV NODE_ENV=production",
     "COPY package*.json ./",
-    "RUN npm ci --omit=dev || npm i --omit=dev",
-    "COPY src ./src",
+    "RUN npm install --omit=dev",
+    "COPY . .",
     "CMD [\"node\", \"src/index.js\"]"
   ]
 }
