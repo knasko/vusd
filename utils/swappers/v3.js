@@ -1,50 +1,48 @@
 import { ethers } from "ethers";
-import {
-  V3_ROUTER_ADDRESS, V3_ROUTER_ABI,
-  USDC_ADDRESS, VUSD_ADDRESS, VUSD_DECIMALS
-} from "../constants.js";
-
+import { V3_ROUTER_ADDRESS, V3_ROUTER_ABI } from "../constants.js";
 
 export function buildV3(providerOrSigner) {
   const routerV3 = new ethers.Contract(V3_ROUTER_ADDRESS, V3_ROUTER_ABI, providerOrSigner);
 
-  async function quote(pool, amountInBn, walletAddress) {
+  // Uniwersalny quote (dowolny tokenIn → tokenOut)
+  async function quoteExact({ fee, tokenIn, tokenOut, amountInBn, outDecimals, recipient }) {
     const outBn = await routerV3.exactInputSingle.staticCall({
-      tokenIn: USDC_ADDRESS,
-      tokenOut: VUSD_ADDRESS,
-      fee: pool.fee,
-      recipient: walletAddress,
+      tokenIn,
+      tokenOut,
+      fee,
+      recipient,
       amountIn: amountInBn,
       amountOutMinimum: 0n,
       sqrtPriceLimitX96: 0n,
     });
-    return { name: pool.name, route: 'V3', fee: pool.fee, outBn, out: Number(ethers.formatUnits(outBn, VUSD_DECIMALS)) };
+    return { outBn, out: Number(ethers.formatUnits(outBn, outDecimals)) };
   }
 
-  async function swap(best, amountInBn, minOutBn, walletAddress) {
+  async function swapExact({ fee, tokenIn, tokenOut, amountInBn, minOutBn, recipient }) {
+    // preflight
     await routerV3.exactInputSingle.staticCall({
-      tokenIn: USDC_ADDRESS,
-      tokenOut: VUSD_ADDRESS,
-      fee: best.fee,
-      recipient: walletAddress,
+      tokenIn,
+      tokenOut,
+      fee,
+      recipient,
       amountIn: amountInBn,
       amountOutMinimum: minOutBn,
       sqrtPriceLimitX96: 0n,
     });
 
     const tx = await routerV3.exactInputSingle({
-      tokenIn: USDC_ADDRESS,
-      tokenOut: VUSD_ADDRESS,
-      fee: best.fee,
-      recipient: walletAddress,
+      tokenIn,
+      tokenOut,
+      fee,
+      recipient,
       amountIn: amountInBn,
       amountOutMinimum: minOutBn,
       sqrtPriceLimitX96: 0n,
     });
     const rc = await tx.wait();
-    if (rc.status !== 1) throw new Error('V3 swap failed');
+    if (rc.status !== 1) throw new Error("V3 swap failed");
     return rc;
   }
 
-  return { quote, swap };
+  return { quoteExact, swapExact };
 }
