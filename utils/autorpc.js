@@ -21,7 +21,7 @@ async function testHttpRpc(url) {
 }
 
 export async function selectRpc() {
-  const fallback = process.env.RPC_URL || "https://mainnet.zkevm.cronos.org;
+  const fallback = process.env.RPC_URL || "https://mainnet.zkevm.cronos.org";
   const useAuto = (process.env.AUTORPC || '0') === '1';
   const list = parseList(process.env.HTTP_RPC_LIST) || [];
   if (!useAuto || list.length === 0) {
