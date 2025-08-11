@@ -19,7 +19,8 @@ export const ERC20_ABI = [
 ];
 
 export const V3_ROUTER_ABI = [
-  "function exactInputSingle((address tokenIn,address tokenOut,uint24 fee,address recipient,uint256 amountIn,uint256 amountOutMinimum,uint160 sqrtPriceLimitX96)) payable returns (uint256)"
+    "function exactInput((bytes path,address recipient,uint256 amountIn,uint256 amountOutMinimum)) payable returns (uint256)",
+  "function WETH9() view returns (address)"
 ];
 
 export const V2_ROUTER_ABI = [
