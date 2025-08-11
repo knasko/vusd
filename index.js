@@ -96,8 +96,8 @@ async function mainOnce() {
     const revRes = (await Promise.all(qRevJobs)).filter(r=>r.ok);
 
     // Logi porównawcze
-    for (const q of fwdRes) logger.quote(`(USDC→vUSD) ${q.name}`, q.out, q.out - TRADE_AMOUNT_USDC);
-    for (const q of revRes) logger.quote(`(vUSD→USDC) ${q.name}`, q.out, q.out - TRADE_AMOUNT_VUSD);
+for (const q of fwdRes) logger.quote(`(USDC→vUSD) ${q.name}`, q.out, q.out - TRADE_AMOUNT_USDC, 'vUSD');
+for (const q of revRes) logger.quote(`(vUSD→USDC) ${q.name}`, q.out, q.out - TRADE_AMOUNT_VUSD, 'USDC');
 
     // Wybór najlepszych kierunków
     const bestFwd = fwdRes.length ? fwdRes.reduce((a,b)=>a.out>b.out?a:b) : null;  // max vUSD
@@ -126,7 +126,7 @@ async function mainOnce() {
       const rc = bestFwd.route === 'V3'
         ? await v3.swapExact({ fee: bestFwd.fee, tokenIn: USDC_ADDRESS, tokenOut: VUSD_ADDRESS, amountInBn: amountUsdcBn, minOutBn: minOut, recipient: wallet.address })
         : await v2.swapExact({ path: [USDC_ADDRESS, VUSD_ADDRESS], amountInBn: amountUsdcBn, minOutBn: minOut, to: wallet.address, deadlineSec: DEADLINE_SEC });
-      logger.swap(`USDC→vUSD ${bestFwd.name}`, fwdProfit);
+      logger.swap(`USDC→vUSD ${bestFwd.name}`, fwdProfit, 'vUSD');
       logger.ok(`Tx: ${rc.transactionHash}`);
     } else {
       const minOut = withSlippageOutMin(bestRev.outBn, SLIPPAGE_BPS);
@@ -135,7 +135,7 @@ async function mainOnce() {
       const rc = bestRev.route === 'V3'
         ? await v3.swapExact({ fee: bestRev.fee, tokenIn: VUSD_ADDRESS, tokenOut: USDC_ADDRESS, amountInBn: amountVusdBn, minOutBn: minOut, recipient: wallet.address })
         : await v2.swapExact({ path: [VUSD_ADDRESS, USDC_ADDRESS], amountInBn: amountVusdBn, minOutBn: minOut, to: wallet.address, deadlineSec: DEADLINE_SEC });
-      logger.swap(`vUSD→USDC ${bestRev.name}`, revProfit);
+      logger.swap(`vUSD→USDC ${bestRev.name}`, revProfit, 'USDC');
       logger.ok(`Tx: ${rc.transactionHash}`);
     }
 
